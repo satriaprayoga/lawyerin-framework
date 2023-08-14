@@ -27,5 +27,5 @@ func Static() {
 
 func (h *Handlers) Routes() {
 	a := e.Group("/articles")
-	a.GET("/create", h.ArticleController.Get)
+	a.GET("/", h.ArticleController.Get)
 }
