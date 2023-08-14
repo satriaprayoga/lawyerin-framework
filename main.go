@@ -16,7 +16,7 @@ import (
 type application struct {
 	L *app.Lawyerin
 	S *data.Store
-	H *controller.Handler
+	H *controller.Handlers
 }
 
 func (a *application) Start() {
@@ -42,12 +42,14 @@ func main() {
 	}
 	l := app.InitLawyerin(path)
 	s := data.New(l.Driver.DB)
-	h := controller.New(l.Route.R)
+	h := controller.New(l.Route.R, s)
 	app := &application{
 		L: l,
 		S: s,
 		H: h,
 	}
+	app.H.Routes()
+
 	app.Start()
 
 }

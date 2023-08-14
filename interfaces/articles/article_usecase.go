@@ -7,5 +7,5 @@ import (
 )
 
 type ArticleService interface {
-	Create(ctx context.Context, data *data.Book) error
+	Create(ctx context.Context, data *data.Article) error
 }

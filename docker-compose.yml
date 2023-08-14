@@ -2,15 +2,15 @@ version: '3.5'
 
 services:
   postgres:
-    container_name: postgresmenunda
+    container_name: postgres_lawyerin
     image: postgres
     restart: always
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: menunda
-      POSTGRES_USER: menunda
-      POSTGRES_DB: menunda
+      POSTGRES_PASSWORD: lawyerin
+      POSTGRES_USER: lawyerin
+      POSTGRES_DB: lawyerin
     volumes:
       - dbdata:/var/lib/postgresql/data
 

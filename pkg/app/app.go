@@ -38,6 +38,7 @@ func InitLawyerin(rootPath string) *Lawyerin {
 		log.Fatalf("%v", err)
 		os.Exit(1)
 	}
+
 	if os.Getenv("DB_TYPE") != "" {
 		dbCon, err = db.OpenDB(os.Getenv("DB_TYPE"), db.BuildConnDB())
 		if err != nil {

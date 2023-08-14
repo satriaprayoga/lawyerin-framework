@@ -1,18 +1,31 @@
 package controller
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+	"github.com/satriaprayoga/lawyerin-framework/data"
+)
 
-var e *echo.Echo
+var (
+	e *echo.Echo
+	s *data.Store
+)
 
-type Handler struct {
+type Handlers struct {
+	ArticleController ArticleController
 }
 
-func New(E *echo.Echo) *Handler {
+func New(E *echo.Echo, S *data.Store) *Handlers {
 	e = E
+	s = S
 	Static()
-	return &Handler{}
+	return &Handlers{ArticleController: NewArticleController(s)}
 }
 
 func Static() {
 	e.Static("/public", "public")
+}
+
+func (h *Handlers) Routes() {
+	a := e.Group("/articles")
+	a.GET("/create", h.ArticleController.Get)
 }
