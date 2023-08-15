@@ -8,21 +8,21 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/satriaprayoga/lawyerin-framework/data"
-	"github.com/satriaprayoga/lawyerin-framework/interfaces/articles"
+	"github.com/satriaprayoga/lawyerin-framework/interfaces/putusans"
 	"github.com/satriaprayoga/lawyerin-framework/pkg/web"
 	"github.com/satriaprayoga/lawyerin-framework/usecases"
 )
 
-type ArticleController struct {
-	articleUC articles.ArticleService
+type PutusanController struct {
+	putusanUC putusans.PutusanService
 }
 
-func NewArticleController(s *data.Store) ArticleController {
-	articleService := usecases.NewArticleUsecase(s)
-	return ArticleController{articleService}
+func NewPutusanController(s *data.Store) PutusanController {
+	putusanService := usecases.NewPutusanUsecase(s)
+	return PutusanController{putusanService}
 }
 
-func (a *ArticleController) Get(c echo.Context) error {
+func (a *PutusanController) Get(c echo.Context) error {
 	ctx := c.Request().Context()
 	if ctx == nil {
 		ctx = context.Background()
@@ -36,8 +36,8 @@ func (a *ArticleController) Get(c echo.Context) error {
 	if id == "" {
 		return resp.ResponseError(http.StatusBadRequest, "invalid or empty path", nil)
 	}
-	articleID, _ := strconv.Atoi(id)
-	data, err := a.articleUC.GetByID(ctx, articleID)
+	putusanID, _ := strconv.Atoi(id)
+	data, err := a.putusanUC.GetByID(ctx, putusanID)
 	if err != nil {
 		return resp.ResponseError(http.StatusNotFound, "item not found", nil)
 	}
@@ -45,7 +45,7 @@ func (a *ArticleController) Get(c echo.Context) error {
 	return resp.Response(http.StatusOK, "ok", data)
 }
 
-func (a *ArticleController) Create(c echo.Context) error {
+func (a *PutusanController) Create(c echo.Context) error {
 	ctx := c.Request().Context()
 	if ctx == nil {
 		ctx = context.Background()
@@ -54,23 +54,23 @@ func (a *ArticleController) Create(c echo.Context) error {
 	var (
 		resp = web.Resp{R: c}
 		//	logger  = logger.GetLogger()
-		article = data.Article{}
+		putusan = data.Putusan{}
 	)
 
-	httpCode, errMsg := web.BindAndValid(c, &article)
+	httpCode, errMsg := web.BindAndValid(c, &putusan)
 	if httpCode != 200 {
 		return resp.ResponseError(httpCode, fmt.Sprintf("%v", errMsg), nil)
 	}
 
-	err := a.articleUC.Create(ctx, &article)
+	err := a.putusanUC.Create(ctx, &putusan)
 	if err != nil {
 		return resp.ResponseError(http.StatusBadRequest, fmt.Sprintf("%v", errMsg), nil)
 	}
 
-	return resp.Response(http.StatusOK, "ok", article)
+	return resp.Response(http.StatusOK, "ok", putusan)
 }
 
-func (a *ArticleController) Update(c echo.Context) error {
+func (a *PutusanController) Update(c echo.Context) error {
 	ctx := c.Request().Context()
 	if ctx == nil {
 		ctx = context.Background()
@@ -78,7 +78,7 @@ func (a *ArticleController) Update(c echo.Context) error {
 	var (
 		resp   = web.Resp{R: c}
 		id     string
-		update = data.Article{}
+		update = data.Putusan{}
 	)
 
 	id = c.Param("id")
@@ -90,16 +90,16 @@ func (a *ArticleController) Update(c echo.Context) error {
 		//logg.Error("%v",errMsg)
 		return resp.ResponseError(httpCode, fmt.Sprintf("%v", errMsg), nil)
 	}
-	articleID, _ := strconv.Atoi(id)
-	err := a.articleUC.Update(ctx, articleID, update)
+	putusanID, _ := strconv.Atoi(id)
+	err := a.putusanUC.Update(ctx, putusanID, update)
 	if err != nil {
 		return resp.ResponseError(http.StatusNotFound, "item not found", nil)
 	}
 
-	return resp.Response(http.StatusOK, "ok", articleID)
+	return resp.Response(http.StatusOK, "ok", putusanID)
 }
 
-func (a *ArticleController) Delete(c echo.Context) error {
+func (a *PutusanController) Delete(c echo.Context) error {
 	ctx := c.Request().Context()
 	if ctx == nil {
 		ctx = context.Background()
@@ -113,8 +113,8 @@ func (a *ArticleController) Delete(c echo.Context) error {
 	if id == "" {
 		return resp.ResponseError(http.StatusBadRequest, "invalid or empty path", nil)
 	}
-	articleID, _ := strconv.Atoi(id)
-	err := a.articleUC.Delete(ctx, articleID)
+	putusanID, _ := strconv.Atoi(id)
+	err := a.putusanUC.Delete(ctx, putusanID)
 	if err != nil {
 		return resp.ResponseError(http.StatusNotFound, "item not found", nil)
 	}
@@ -122,7 +122,7 @@ func (a *ArticleController) Delete(c echo.Context) error {
 	return resp.Response(http.StatusOK, "ok", nil)
 }
 
-func (a *ArticleController) TextSearch(c echo.Context) error {
+func (a *PutusanController) TextSearch(c echo.Context) error {
 	ctx := c.Request().Context()
 	if ctx == nil {
 		ctx = context.Background()
@@ -141,7 +141,7 @@ func (a *ArticleController) TextSearch(c echo.Context) error {
 		return resp.ResponseError(httpCode, fmt.Sprintf("%v", errMsg), nil)
 	}
 
-	result, err := a.articleUC.TextSearch(ctx, s.SearchTerm)
+	result, err := a.putusanUC.TextSearch(ctx, s.SearchTerm)
 	if err != nil {
 		return resp.ResponseError(http.StatusBadRequest, fmt.Sprintf("%v", err), nil)
 	}
