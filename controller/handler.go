@@ -27,5 +27,9 @@ func Static() {
 
 func (h *Handlers) Routes() {
 	a := e.Group("/articles")
-	a.GET("/", h.ArticleController.Get)
+	a.GET("/:id", h.ArticleController.Get)
+	a.PUT("/:id", h.ArticleController.Update)
+	a.DELETE("/:id", h.ArticleController.Delete)
+	a.POST("/create", h.ArticleController.Create)
+	a.GET("/search", h.ArticleController.TextSearch)
 }
