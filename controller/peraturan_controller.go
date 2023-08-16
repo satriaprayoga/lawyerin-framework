@@ -91,6 +91,7 @@ func (a *PeraturanController) Update(c echo.Context) error {
 		return resp.ResponseError(httpCode, fmt.Sprintf("%v", errMsg), nil)
 	}
 	peraturanID, _ := strconv.Atoi(id)
+	update.Slug = update.Category + " " + update.Bidang + " " + update.SubBidang + " " + update.Creator
 	err := a.peraturanUC.Update(ctx, peraturanID, update)
 	if err != nil {
 		return resp.ResponseError(http.StatusNotFound, "item not found", nil)

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/satriaprayoga/lawyerin-framework/pkg/utils"
+	"gorm.io/gorm"
 )
 
 type Peraturan struct {
@@ -35,8 +36,18 @@ type PeraturanResult struct {
 	Rank        float64 `json:"rank"`
 }
 
+func (a *Peraturan) BeforeCreate(tx *gorm.DB) (err error) {
+	a.Slug = a.Category + " " + a.Bidang + " " + a.SubBidang + " " + a.Creator
+	return
+}
+
+func (a *Peraturan) BeforeUpdate(tx *gorm.DB) (err error) {
+	a.Slug = a.Category + " " + a.Bidang + " " + a.SubBidang + " " + a.Creator
+	return
+}
+
 func (a *Peraturan) Create(data *Peraturan) error {
-	data.Slug = data.Category + " " + data.Bidang + " " + data.SubBidang
+	//data.Slug = data.Category + " " + data.Bidang + " " + data.SubBidang + " " + data.Creator
 	query := db.Create(data)
 	err := query.Error
 	if err != nil {

@@ -91,6 +91,7 @@ func (a *ArticleController) Update(c echo.Context) error {
 		return resp.ResponseError(httpCode, fmt.Sprintf("%v", errMsg), nil)
 	}
 	articleID, _ := strconv.Atoi(id)
+	update.Slug = update.Category + " " + update.Bidang + " " + update.SubBidang
 	err := a.articleUC.Update(ctx, articleID, update)
 	if err != nil {
 		return resp.ResponseError(http.StatusNotFound, "item not found", nil)
