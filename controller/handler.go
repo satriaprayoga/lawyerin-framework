@@ -11,15 +11,16 @@ var (
 )
 
 type Handlers struct {
-	ArticleController ArticleController
-	PutusanController PutusanController
+	ArticleController   ArticleController
+	PutusanController   PutusanController
+	PeraturanController PeraturanController
 }
 
 func New(E *echo.Echo, S *data.Store) *Handlers {
 	e = E
 	s = S
 	Static()
-	return &Handlers{ArticleController: NewArticleController(s), PutusanController: NewPutusanController(s)}
+	return &Handlers{ArticleController: NewArticleController(s), PutusanController: NewPutusanController(s), PeraturanController: NewPeraturanController(s)}
 }
 
 func Static() {
@@ -40,4 +41,11 @@ func (h *Handlers) Routes() {
 	b.DELETE("/:id", h.PutusanController.Delete)
 	b.POST("/create", h.PutusanController.Create)
 	b.GET("/search", h.PutusanController.TextSearch)
+
+	c := e.Group("/peraturan")
+	c.GET("/:id", h.PeraturanController.Get)
+	c.PUT("/:id", h.PeraturanController.Update)
+	c.DELETE("/:id", h.PeraturanController.Delete)
+	c.POST("/create", h.PeraturanController.Create)
+	c.GET("/search", h.PeraturanController.TextSearch)
 }

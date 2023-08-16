@@ -42,7 +42,7 @@ type PutusanResult struct {
 }
 
 func (a *Putusan) Create(data *Putusan) error {
-	data.Slug = data.Category + " " + data.Bidang + " " + data.SubBidang
+	data.Slug = data.Category + " " + data.Bidang + " " + data.SubBidang + " " + data.Pemohon + " " + data.Vs
 	query := db.Create(data)
 	err := query.Error
 	if err != nil {

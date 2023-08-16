@@ -5,18 +5,19 @@ import "gorm.io/gorm"
 var db *gorm.DB
 
 type Store struct {
-	Article Article
-	Putusan Putusan
+	Article   Article
+	Putusan   Putusan
+	Peraturan Peraturan
 }
 
 func New(conn *gorm.DB) *Store {
 	db = conn
 	autoMigrate()
-	return &Store{Article: Article{}, Putusan: Putusan{}}
+	return &Store{Article: Article{}, Putusan: Putusan{}, Peraturan: Peraturan{}}
 }
 
 func autoMigrate() {
-	db.AutoMigrate(Article{}, Putusan{})
+	db.AutoMigrate(Article{}, Putusan{}, Peraturan{})
 	migrateScript()
 }
 
@@ -35,5 +36,12 @@ func migrateScript() {
 			setweight(to_tsvector('indonesian', coalesce(slug, '')), 'B') || ' ' || 
 			setweight(to_tsvector('indonesian', coalesce(description, '')), 'C') :: tsvector
 		) STORED;
-	CREATE INDEX idx_text_search ON article USING GIN(text_search); `)
+	CREATE INDEX idx_text_search ON article USING GIN(text_search); 
+	ALTER TABLE peraturan ADD text_search tsvector 
+		GENERATED ALWAYS AS	(
+			setweight(to_tsvector('indonesian', coalesce(title, '')), 'A') || ' ' ||
+			setweight(to_tsvector('indonesian', coalesce(slug, '')), 'B') || ' ' || 
+			setweight(to_tsvector('indonesian', coalesce(description, '')), 'C') :: tsvector
+		) STORED;
+	CREATE INDEX idx_text_search ON article USING GIN(text_search);`)
 }
