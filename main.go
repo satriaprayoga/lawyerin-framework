@@ -11,12 +11,14 @@ import (
 	"github.com/satriaprayoga/lawyerin-framework/data"
 	"github.com/satriaprayoga/lawyerin-framework/pkg/app"
 	db "github.com/satriaprayoga/lawyerin-framework/pkg/database"
+	"github.com/satriaprayoga/lawyerin-framework/pkg/filesystem"
 )
 
 type application struct {
-	L *app.Lawyerin
-	S *data.Store
-	H *controller.Handlers
+	L  *app.Lawyerin
+	S  *data.Store
+	H  *controller.Handlers
+	FS filesystem.FS
 }
 
 func (a *application) Start() {
@@ -42,11 +44,14 @@ func main() {
 	}
 	l := app.InitLawyerin(path)
 	s := data.New(l.Driver.DB)
-	h := controller.New(l.Route.R, s)
+	//h := controller.New(l.Route.R, s)
+	fs := filesystem.New()
+	h := controller.New(l.Route.R, s, &fs)
 	app := &application{
-		L: l,
-		S: s,
-		H: h,
+		L:  l,
+		S:  s,
+		H:  h,
+		FS: fs,
 	}
 	app.H.Routes()
 

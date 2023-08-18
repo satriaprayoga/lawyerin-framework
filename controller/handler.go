@@ -3,24 +3,31 @@ package controller
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/satriaprayoga/lawyerin-framework/data"
+	"github.com/satriaprayoga/lawyerin-framework/pkg/filesystem"
 )
 
 var (
-	e *echo.Echo
-	s *data.Store
+	e  *echo.Echo
+	s  *data.Store
+	fs *filesystem.FS
 )
 
 type Handlers struct {
 	ArticleController   ArticleController
 	PutusanController   PutusanController
 	PeraturanController PeraturanController
+	FileController      FileController
 }
 
-func New(E *echo.Echo, S *data.Store) *Handlers {
+func New(E *echo.Echo, S *data.Store, FS *filesystem.FS) *Handlers {
 	e = E
 	s = S
+	fs = FS
 	Static()
-	return &Handlers{ArticleController: NewArticleController(s), PutusanController: NewPutusanController(s), PeraturanController: NewPeraturanController(s)}
+	return &Handlers{ArticleController: NewArticleController(s),
+		PutusanController:   NewPutusanController(s),
+		PeraturanController: NewPeraturanController(s),
+		FileController:      NewFileController(*fs)}
 }
 
 func Static() {
@@ -48,4 +55,7 @@ func (h *Handlers) Routes() {
 	c.DELETE("/:id", h.PeraturanController.Delete)
 	c.POST("/create", h.PeraturanController.Create)
 	c.GET("/search", h.PeraturanController.TextSearch)
+
+	d := e.Group("/files")
+	d.PUT("/upload", h.FileController.Upload)
 }
