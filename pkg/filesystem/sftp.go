@@ -51,6 +51,7 @@ func (s *SFTP) getCredentials() (*sftp.Client, error) {
 }
 
 func (s *SFTP) Put(filename, folder string) error {
+	var filepath string
 	client, err := s.getCredentials()
 	if err != nil {
 		log.Printf("%v", err)
@@ -65,7 +66,14 @@ func (s *SFTP) Put(filename, folder string) error {
 	}
 	defer f.Close()
 
-	f2, err := client.Create(fmt.Sprintf("%s/%s", folder, path.Base(filename)))
+	if folder != "" {
+		client.MkdirAll(folder)
+		filepath = fmt.Sprintf("%s/%s", folder, path.Base(filename))
+	} else {
+		filepath = filename
+	}
+
+	f2, err := client.Create(filepath)
 	if err != nil {
 		log.Printf("%v", err)
 		return err

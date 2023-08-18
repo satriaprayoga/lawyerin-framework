@@ -5,19 +5,28 @@ import "gorm.io/gorm"
 var db *gorm.DB
 
 type Store struct {
-	Article   Article
-	Putusan   Putusan
-	Peraturan Peraturan
+	Article    Article
+	Putusan    Putusan
+	Peraturan  Peraturan
+	FileUpload FileUpload
 }
 
 func New(conn *gorm.DB) *Store {
 	db = conn
 	autoMigrate()
-	return &Store{Article: Article{}, Putusan: Putusan{}, Peraturan: Peraturan{}}
+	return &Store{
+		Article:    Article{},
+		Putusan:    Putusan{},
+		Peraturan:  Peraturan{},
+		FileUpload: FileUpload{},
+	}
 }
 
 func autoMigrate() {
-	db.AutoMigrate(Article{}, Putusan{}, Peraturan{})
+	db.AutoMigrate(Article{},
+		Putusan{},
+		Peraturan{},
+		FileUpload{})
 	migrateScript()
 }
 
