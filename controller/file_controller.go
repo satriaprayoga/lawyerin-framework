@@ -30,10 +30,10 @@ func (f *FileController) Upload(c echo.Context) error {
 		return resp.ResponseError(http.StatusBadRequest, fmt.Sprintf("%v", err), err)
 	}
 
-	err = f.fs.Put("./tmp/"+filename, "test")
-	if err != nil {
-		return resp.ResponseError(http.StatusBadRequest, fmt.Sprintf("%v", err), err)
-	}
+	// err = f.fs.Put("./tmp/"+filename, "test")
+	// if err != nil {
+	// 	return resp.ResponseError(http.StatusBadRequest, fmt.Sprintf("%v", err), err)
+	// }
 
 	return resp.Response(http.StatusOK, "OK", filename)
 
@@ -54,7 +54,11 @@ func (f *FileController) getUploadFile(c echo.Context) (string, error) {
 	defer src.Close()
 
 	// Destination
-	dst, err := os.Create("./tmp/" + file.Filename)
+	errDir := os.MkdirAll("./public/profile/user/", 0777)
+	if err != nil {
+		return "", errDir
+	}
+	dst, err := os.Create("./public/profile/user/" + file.Filename)
 	if err != nil {
 		log.Printf("%v", err)
 		return "", err

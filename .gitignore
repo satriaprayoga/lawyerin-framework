@@ -19,5 +19,7 @@ vendor/
 
 db-data/
 
+public/
+
 # Go workspace file
 go.work
