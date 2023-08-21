@@ -9,6 +9,7 @@ type Store struct {
 	Putusan    Putusan
 	Peraturan  Peraturan
 	FileUpload FileUpload
+	Firm       Firm
 }
 
 func New(conn *gorm.DB) *Store {
@@ -19,6 +20,7 @@ func New(conn *gorm.DB) *Store {
 		Putusan:    Putusan{},
 		Peraturan:  Peraturan{},
 		FileUpload: FileUpload{},
+		Firm:       Firm{},
 	}
 }
 
@@ -26,12 +28,15 @@ func autoMigrate() {
 	db.AutoMigrate(Article{},
 		Putusan{},
 		Peraturan{},
-		FileUpload{})
+		FileUpload{},
+		Firm{})
 	migrateScript()
 }
 
 func migrateScript() {
 	db.Exec(`CREATE EXTENSION pg_trgm;
+	CREATE EXTENSION cube; 
+	CREATE EXTENSION earthdistance;
 	ALTER TABLE article ADD text_search tsvector 
 		GENERATED ALWAYS AS	(
 			setweight(to_tsvector('indonesian', coalesce(title, '')), 'A') || ' ' ||
