@@ -34,9 +34,9 @@ func autoMigrate() {
 }
 
 func migrateScript() {
-	db.Exec(`CREATE EXTENSION pg_trgm;
-	CREATE EXTENSION cube; 
-	CREATE EXTENSION earthdistance;
+	db.Exec(`CREATE EXTENSION IF NOT EXISTS pg_trgm;
+	CREATE EXTENSION IF NOT EXISTS cube; 
+	CREATE EXTENSION IF NOT EXISTS earthdistance;
 	ALTER TABLE article ADD text_search tsvector 
 		GENERATED ALWAYS AS	(
 			setweight(to_tsvector('indonesian', coalesce(title, '')), 'A') || ' ' ||
@@ -57,5 +57,14 @@ func migrateScript() {
 			setweight(to_tsvector('indonesian', coalesce(slug, '')), 'B') || ' ' || 
 			setweight(to_tsvector('indonesian', coalesce(description, '')), 'C') :: tsvector
 		) STORED;
-	CREATE INDEX idx_peraturan_text_search ON putusan USING GIN(text_search);`)
+	CREATE INDEX idx_peraturan_text_search ON putusan USING GIN(text_search);
+	CREATE OR REPLACE FUNCTION order_by_distance(latitude numeric, longitude numeric)
+ RETURNS TABLE(firm_name varchar, address varchar, city varchar, province varchar, lat numeric, lng numeric, distance numeric)
+ LANGUAGE sql
+AS $$
+SELECT firm_name, address, city, province, lat, lng, 6371 * acos(cos(radians(latitude)) * cos(radians(lat)) * cos(radians(lng) - radians(longitude)) + sin(radians(latitude)) * sin(radians(lat))) AS distance
+FROM firm
+ORDER BY distance ASC;
+$$
+`)
 }
