@@ -9,6 +9,7 @@ import (
 	"github.com/satriaprayoga/lawyerin-framework/data"
 	firms "github.com/satriaprayoga/lawyerin-framework/interfaces/firm"
 	"github.com/satriaprayoga/lawyerin-framework/pkg/logger"
+	"github.com/satriaprayoga/lawyerin-framework/pkg/web"
 )
 
 type FirmUsecase struct {
@@ -76,4 +77,17 @@ func (a *FirmUsecase) GetByID(ctx context.Context, ID int) (*data.Firm, error) {
 		return nil, err
 	}
 	return result, nil
+}
+
+func (a *FirmUsecase) FindByRadius(ctx context.Context, lat, lng float64) (result web.ResponseModelList, err error) {
+	_, cancel := context.WithTimeout(ctx, a.timeout)
+	defer cancel()
+	log := logger.GetLogger()
+	result.Data, err = a.store.Firm.FindByRadius(lat, lng)
+	if err != nil {
+		log.Error("%v", err)
+		return result, err
+	}
+	return result, nil
+
 }

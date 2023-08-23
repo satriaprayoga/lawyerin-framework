@@ -13,6 +13,15 @@ type Firm struct {
 	Lng      float64   `json:"lng" gorm:"type:decimal(11,8)"`
 }
 
+type FirmResult struct {
+	FirmID   int     `json:"firm_id"`
+	FirmName string  `json:"firm_name"`
+	Address  string  `json:"address"`
+	Province string  `json:"province"`
+	City     string  `json:"city"`
+	Distance float64 `json:"distance"`
+}
+
 func (a *Firm) Create(data *Firm) error {
 	//data.Slug = data.Category + " " + data.Bidang + " " + data.SubBidang
 	query := db.Create(data)
@@ -50,6 +59,15 @@ func (a *Firm) GetByID(ID int) (*Firm, error) {
 	var result = &Firm{}
 	query := db.Where("firm_id=?", ID).Find(&result)
 	err := query.Error
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (a *Firm) FindByRadius(lat, lng float64) (result *[]FirmResult, err error) {
+	query := db.Raw("SELECT firm_id,firm_name,address,province,city,distance FROM order_by_distance(?,?)", lat, lng).Scan(&result)
+	err = query.Error
 	if err != nil {
 		return nil, err
 	}

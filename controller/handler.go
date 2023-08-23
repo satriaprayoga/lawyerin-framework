@@ -17,6 +17,7 @@ type Handlers struct {
 	PutusanController   PutusanController
 	PeraturanController PeraturanController
 	FileController      FileController
+	FirmController      FirmController
 }
 
 func New(E *echo.Echo, S *data.Store, FS *filesystem.FS) *Handlers {
@@ -27,7 +28,8 @@ func New(E *echo.Echo, S *data.Store, FS *filesystem.FS) *Handlers {
 	return &Handlers{ArticleController: NewArticleController(s),
 		PutusanController:   NewPutusanController(s),
 		PeraturanController: NewPeraturanController(s),
-		FileController:      NewFileController(*fs)}
+		FileController:      NewFileController(*fs),
+		FirmController:      NewFirmController(s)}
 }
 
 func Static() {
@@ -58,4 +60,7 @@ func (h *Handlers) Routes() {
 
 	d := e.Group("/files")
 	d.PUT("/upload", h.FileController.Upload)
+
+	e := e.Group("/firms")
+	e.GET("/radius", h.FirmController.Radius)
 }
